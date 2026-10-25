@@ -1,9 +1,10 @@
 # H4NR Crosshair
 
-Small, client-only GTA V/FiveM crosshair resource. Works alongside
+Small GTA V/FiveM crosshair resource with client rendering. Works alongside
 `feather-weapons` or another weapon system; requires only `feather-menu-v2` for
-its settings menu. No database, Core, Inventory, server scripts, frontend build,
-or additional NUI page is needed.
+its settings menu. An optional server integration registers its command suggestion
+with `feather-chat`. No database, Core, Inventory, frontend build, or additional
+NUI page is needed.
 
 ## Install
 
@@ -30,6 +31,10 @@ remains the player command.
 
 Use **`/crosshair`**. An optional key can be assigned in FiveM key bindings.
 Romanian is the default language; `Config.DefaultLang = 'en_us'` selects English.
+With `feather-chat` running, the configured command appears in autocomplete.
+The suggestion registers at startup and again after Chat restarts. Chat releases
+its input focus before executing the command, allowing the settings menu to
+take focus. In F8, enter `crosshair` without the slash.
 
 - Cross, square dot, T shape, or square outline.
 - CS2-style controls for length, thickness, gap, outline thickness, RGB color,

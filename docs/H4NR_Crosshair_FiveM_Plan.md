@@ -2,7 +2,7 @@
 
 ## Ownership
 
-Crosshair is a standalone, client-only presentation resource. It owns its
+Crosshair is a standalone presentation resource with client rendering. It owns its
 crosshair preferences, native-reticle suppression, native drawing, and Menu v2
 consumer integration. Weapons remains responsible for weapon ownership and
 runtime authorization; Inventory remains responsible for item instances. There
@@ -51,3 +51,15 @@ controls. Native preview updates as the draft changes. Save/Cancel and KVP
 migration retain the existing lifecycle. Old settings without `outlineSize`
 default to the original one-pixel outline. No console-command customization or
 share-code import was added. CS2 dynamic/recoil simulation is outside scope.
+
+## Chat command integration — 2026-10-25
+
+A small server script registers `/<Config.Command>` through Chat's public
+`RegisterSuggestion` export after ready health and on `chat.ready.v1`. Its
+registration guard resets when Chat stops; Chat owns cleanup when Crosshair
+stops. Config is shared with that script, and Chat remains optional. Descriptions
+use Romanian by default and English otherwise. No gameplay command runs on the
+server. Chat closes/releases its NUI focus before `ExecuteCommand`, enabling
+focus-aware consumers and preserving the new menu's focus after execution.
+Offline regression tests cover the real Chat client dispatch ordering and
+suggestion lifecycle. Confirm autocomplete and opening from chat in FiveM.
