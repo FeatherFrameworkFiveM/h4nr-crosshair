@@ -13,10 +13,18 @@ local defaults = Crosshair.defaults()
 local clean = Crosshair.sanitize({ enabled = false, outline = false, centerDot = true, size = 999,
     gap = -10, opacity = 0 / 0, thickness = math.huge, color = '#ffffff', style = 'invalid', foreign = true })
 check(clean.enabled == false and clean.outline == false and clean.centerDot == true, 'preserve boolean false')
-check(clean.size == 24 and clean.gap == 0, 'clamp numeric limits')
+check(clean.size == 64 and clean.gap == -10, 'clamp numeric limits and allow negative gap')
 check(clean.opacity == defaults.opacity and clean.thickness == defaults.thickness, 'reject NaN and infinity')
 check(clean.color == '#FFFFFF' and clean.style == defaults.style and clean.foreign == nil, 'allowlist settings')
 check(Crosshair.sanitize('bad').size == defaults.size, 'malformed persisted value')
+local fractional = Crosshair.sanitize({ size = 1.2, thickness = 0.8, gap = -1.6, outlineSize = 0.5, color = '#123abc', opacity = 0 })
+check(math.abs(fractional.size - 1.2) < 0.001 and math.abs(fractional.thickness - 0.8) < 0.001, 'fractional length and thickness')
+check(math.abs(fractional.gap + 1.6) < 0.001 and fractional.outlineSize == 0.5, 'fractional gap and outline')
+check(fractional.color == '#123ABC' and fractional.opacity == 0, 'arbitrary RGB and transparent alpha')
+check(Crosshair.sanitize({ color = 'url(fake)' }).color == defaults.color, 'reject non-hex colors')
+for _, rect in ipairs(Crosshair.geometry(Crosshair.sanitize({ style = 'box', size = 0, gap = -32 }))) do
+    check(rect[3] > 0 and rect[4] > 0, 'negative gap box keeps valid dimensions')
+end
 Config.Defaults.enabled = false
 check(Crosshair.defaults().enabled == false, 'server false default')
 Config.Defaults.enabled = true
@@ -105,7 +113,10 @@ function menu:AddElement(_, _, _, spec, callback)
     elements[spec.key] = { spec = spec, callback = callback }
     return ok({ elementId = spec.key })
 end
-function menu:UpdateElement(_, _, key, patch) elements[key].spec.value = patch.value return ok() end
+function menu:UpdateElement(_, _, key, patch)
+    for name, value in pairs(patch) do elements[key].spec[name] = value end
+    return ok()
+end
 function menu:OpenMenu() state.focused = true return ok() end
 function menu:CloseMenu(id)
     state.focused = false
@@ -161,6 +172,25 @@ state.weapon = 10
 open()
 frame()
 check(#draws > 0 and draws[1][1] > 0.6, 'settings preview on right')
+check(elements.size.spec.step == 0.1 and elements.gap.spec.min == -32, 'CS-style slider precision and gap')
+change('red', 18)
+change('green', 52)
+change('blue', 86)
+frame()
+check(draws[5][5] == 18 and draws[5][6] == 52 and draws[5][7] == 86, 'RGB sliders update preview')
+check(elements.color.spec.value == '#123456' and #elements.color.spec.options == 9, 'custom RGB appears in palette')
+change('color', '#5EF2A0')
+check(elements.red.spec.value == 94 and elements.green.spec.value == 242 and elements.blue.spec.value == 160, 'palette syncs RGB sliders')
+change('outlineSize', 0.5)
+frame()
+check(math.abs((draws[1][3] - draws[5][3]) * 1920 - 1) < 0.001, 'outline thickness rendered from slider')
+change('opacity', 0)
+frame()
+check(draws[5][8] == 0, 'zero opacity preview')
+click('reset')
+check(elements.red.spec.value == 0 and elements.green.spec.value == 191 and elements.blue.spec.value == 255,
+    'defaults reset RGB controls')
+check(elements.outlineSize.spec.value == 1, 'defaults reset outline width')
 change('style', 'dot')
 change('outline', false)
 frame()
@@ -234,4 +264,24 @@ check(elements.enabled.spec.value == false and writes == previousWrites + 1, 're
 click('cancel')
 dofile('client/main.lua')
 check(externalReads == 1, 'new settings take precedence over old namespace')
+open()
+change('red', 18)
+change('green', 52)
+change('blue', 86)
+change('size', 1.2)
+change('thickness', 0.8)
+change('gap', -1.6)
+change('outlineSize', 0.5)
+click('save')
+check(encoded.color == '#123456' and math.abs(encoded.gap + 1.6) < 0.001, 'custom RGB and negative gap persisted')
+dofile('client/main.lua')
+open()
+check(elements.color.spec.value == '#123456' and #elements.color.spec.options == 9, 'custom palette survives restart')
+check(elements.red.spec.value == 18 and math.abs(elements.thickness.spec.value - 0.8) < 0.001,
+    'RGB and fractional slider values survive restart')
+change('blue', 255)
+click('cancel')
+open()
+check(elements.blue.spec.value == 86, 'cancel restores saved custom RGB')
+click('cancel')
 print(('Passed %d assertions (model, rendering, menu lifecycle, persistence, restart).'):format(count))

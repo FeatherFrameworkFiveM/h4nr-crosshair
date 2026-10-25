@@ -20,8 +20,9 @@ client KVP namespace when the new resource has no saved preferences. The
 
 ## Delivery — 2026-10-25
 
-- Implemented: four configurable static shapes, eight colors, bounded dimensions,
-  opacity, outline and optional center dot; 1080p-reference native rectangles.
+- Implemented: four configurable static shapes, arbitrary RGB sliders plus eight
+  palette colors, fractional dimensions/negative gap, adjustable outline width,
+  opacity and optional center dot; 1080p-reference native rectangles.
 - Implemented: configurable frame-based HUD component 14 suppression, independent
   of custom enablement; first-person sniper and explicit weapon exemptions.
 - Implemented: aiming-only presentation, controller target-lock eligibility,
@@ -38,3 +39,15 @@ visible, so a Crosshair per-frame hide composes without a HUD change. Other HUD
 implementations that explicitly show it each frame require coexistence review.
 Scopes/camera masks are not removed. The centered static crosshair does not
 predict impact, enforce accuracy, or track the muzzle ray.
+
+## CS2-style customization menu — 2026-10-25
+
+The player opens `/crosshair` and adjusts the menu, as in the supplied CS2
+settings screenshot. Menu v2 renders length/thickness/gap/outline-width sliders
+with 0.1 steps; RGB channels use integer 0–255 sliders. Custom hex colors remain
+representable in the palette after saving/reopening. Palette selection and RGB
+sliders synchronize in both directions; Defaults resets the draft and all color
+controls. Native preview updates as the draft changes. Save/Cancel and KVP
+migration retain the existing lifecycle. Old settings without `outlineSize`
+default to the original one-pixel outline. No console-command customization or
+share-code import was added. CS2 dynamic/recoil simulation is outside scope.

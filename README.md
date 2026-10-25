@@ -32,8 +32,11 @@ Use **`/crosshair`**. An optional key can be assigned in FiveM key bindings.
 Romanian is the default language; `Config.DefaultLang = 'en_us'` selects English.
 
 - Cross, square dot, T shape, or square outline.
-- Eight colors, size, center gap, line thickness, opacity, black outline,
-  and optional center dot.
+- CS2-style controls for length, thickness, gap, outline thickness, RGB color,
+  opacity, style and optional center dot. Length, thickness, gap and outline
+  support 0.1 increments, including negative gaps for overlapping arms.
+- Red, Green and Blue sliders each support 0–255 for any RGB color. Eight quick
+  palette colors remain available and stay synchronized with the RGB sliders.
 - Live preview to the right of the menu. The crosshair preview is hidden when
   its Enabled toggle is off.
 - **Save** applies and persists preferences in client KVP.
@@ -58,12 +61,13 @@ preference exists and when the player chooses Defaults.
 | `ExcludedWeapons` | `{}` | Weapon-name array that bypasses both custom drawing and native suppression. Useful for weapons with special sights. |
 | `Defaults.enabled` | `true` | Enable the custom crosshair. |
 | `Defaults.style` | `cross` | `cross`, `dot`, `t`, or `box`. |
-| `Defaults.color` | `#00BFFF` | One of the eight colors in `Crosshair.palette`. |
-| `Defaults.size` | `7` | Arm length, or square-dot side, 2–24 reference pixels. |
-| `Defaults.gap` | `4` | Inner gap, 0–20 reference pixels; square radius is size + gap. Ignored for dot. |
-| `Defaults.thickness` | `2` | Line/center-dot thickness, 1–6 reference pixels. Ignored for the main dot. |
-| `Defaults.opacity` | `100` | 10–100 percent, including the outline. |
-| `Defaults.outline` | `true` | One reference pixel of black outline. |
+| `Defaults.color` | `#00BFFF` | Any six-digit RGB hex color (`#RRGGBB`). |
+| `Defaults.size` | `7` | Arm length, or square-dot side, 0–64 reference pixels, step 0.1. |
+| `Defaults.gap` | `4` | Inner gap, -32–64 reference pixels, step 0.1; square radius is max(0, size + gap). Ignored for dot. |
+| `Defaults.thickness` | `2` | Line/center-dot thickness, 0.1–16 reference pixels, step 0.1. Ignored for the main dot. |
+| `Defaults.opacity` | `100` | 0–100 percent, including the outline. |
+| `Defaults.outline` | `true` | Enable the black outline. |
+| `Defaults.outlineSize` | `1` | Black outline thickness, 0–8 reference pixels, step 0.1. |
 | `Defaults.centerDot` | `false` | Add a center dot to cross, T, or square. |
 
 Dimensions scale from a 1080p reference using screen height, with horizontal
@@ -71,6 +75,11 @@ normalization to keep proportions on wide displays. The aiming point is fixed
 at screen center; this is a static visual aid, not a projection of bullet impact,
 recoil, weapon spread, or the muzzle ray. Special camera/weapon modes require
 live verification and may need an `ExcludedWeapons` entry.
+
+The screenshot-inspired controls adjust this resource's static crosshair.
+They do not reproduce CS2 recoil, dynamic spread, game-specific measurement
+units, or share-code import. Use `/crosshair` to open the menu and change
+settings with its sliders; no console variables are required.
 
 The custom crosshair appears only while aiming a firearm (including controller
 targeting). It is hidden during reload, death, pause, screen fade, NUI focus,

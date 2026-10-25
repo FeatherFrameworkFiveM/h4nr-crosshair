@@ -19,5 +19,6 @@ Config.Defaults = {
     thickness = 2,
     opacity = 100,
     outline = true,
+    outlineSize = 1,
     centerDot = false,
 }

@@ -6,12 +6,14 @@ local fields = {}
 local labels = {
     ro = { title = 'Setări țintă', help = 'Previzualizare în dreapta. Modificările se aplică după Salvează.',
         enabled = 'Țintă personalizată', style = 'Stil', cross = 'Cruce', dot = 'Punct', t = 'Forma T', box = 'Pătrat',
-        color = 'Culoare', size = 'Dimensiune', gap = 'Distanță față de centru', thickness = 'Grosime',
+        color = 'Culori rapide', customColor = 'Personalizată', red = 'Roșu', green = 'Verde', blue = 'Albastru',
+        size = 'Lungime', gap = 'Distanță față de centru', thickness = 'Grosime', outlineSize = 'Grosime contur',
         opacity = 'Opacitate (%)', outline = 'Contur negru', centerDot = 'Punct central',
         reset = 'Valori implicite', cancel = 'Anulează', save = 'Salvează', command = 'Deschide setările țintei' },
     en_us = { title = 'Crosshair settings', help = 'Preview on the right. Changes apply after Save.',
         enabled = 'Custom crosshair', style = 'Style', cross = 'Cross', dot = 'Dot', t = 'T shape', box = 'Square',
-        color = 'Color', size = 'Size', gap = 'Center gap', thickness = 'Thickness',
+        color = 'Quick colors', customColor = 'Custom', red = 'Red', green = 'Green', blue = 'Blue',
+        size = 'Length', gap = 'Center gap', thickness = 'Thickness', outlineSize = 'Outline thickness',
         opacity = 'Opacity (%)', outline = 'Black outline', centerDot = 'Center dot',
         reset = 'Defaults', cancel = 'Cancel', save = 'Save', command = 'Open crosshair settings' },
 }
@@ -77,27 +79,66 @@ local function buildMenu()
     end
     add('header', { key = 'title', value = text.title, slot = 'header' })
     add('textdisplay', { key = 'help', value = text.help })
+    local function colorOptions()
+        local options, found = {}, false
+        for _, color in ipairs(Crosshair.palette) do
+            options[#options + 1] = color
+            if color == draft.color then found = true end
+        end
+        if not found then options[#options + 1] = { value = draft.color, color = draft.color, label = text.customColor } end
+        return options
+    end
+    local function channelValue(key)
+        local r, g, b = Crosshair.rgb(draft.color)
+        return ({ red = r, green = g, blue = b })[key]
+    end
+    local function syncColors()
+        requireResult(Menu:UpdateElement(menuId, pageId, fields.color, { value = draft.color, options = colorOptions() }))
+        for _, key in ipairs({ 'red', 'green', 'blue' }) do
+            requireResult(Menu:UpdateElement(menuId, pageId, fields[key], { value = channelValue(key) }))
+        end
+    end
     local function field(key, kind, options)
         local spec = { key = key, label = text[key], value = draft[key], persist = true }
         if options then spec.options = options end
         local bounds = Crosshair.ranges[key]
-        if bounds then spec.min, spec.max, spec.step = bounds[1], bounds[2], 1 end
+        if bounds then spec.min, spec.max, spec.step = bounds[1], bounds[2], Crosshair.steps[key] end
         fields[key] = add(kind, spec, function(event)
             draft[key] = event.value
             draft = Crosshair.sanitize(draft)
+            if key == 'color' then syncColors() end
         end)
     end
     field('enabled', 'toggle')
     local styles = {}
     for _, style in ipairs({ 'cross', 'dot', 't', 'box' }) do styles[#styles + 1] = { value = style, label = text[style] } end
     field('style', 'dropdown', styles)
-    field('color', 'colorpicker', Crosshair.palette)
-    for _, key in ipairs({ 'size', 'gap', 'thickness', 'opacity' }) do field(key, 'slider') end
-    field('outline', 'toggle')
     field('centerDot', 'toggle')
+    for _, key in ipairs({ 'size', 'thickness', 'gap' }) do field(key, 'slider') end
+    field('outline', 'toggle')
+    field('outlineSize', 'slider')
+    field('color', 'colorpicker', colorOptions())
+    for _, channel in ipairs({ 'red', 'green', 'blue' }) do
+        local key = channel
+        fields[key] = add('slider', { key = key, label = text[key], value = channelValue(key), min = 0, max = 255, step = 1, persist = true }, function(event)
+            local value = event.value
+            if type(value) ~= 'number' or value ~= value or value < 0 or value > 255 then return end
+            local r, g, b = Crosshair.rgb(draft.color)
+            value = math.floor(value + 0.5)
+            if key == 'red' then r = value elseif key == 'green' then g = value else b = value end
+            draft.color = ('#%02X%02X%02X'):format(r, g, b)
+            syncColors()
+        end)
+    end
+    field('opacity', 'slider')
     add('button', { key = 'reset', label = text.reset, slot = 'footer', row = 'actions' }, function()
         draft = Crosshair.defaults()
-        for key, id in pairs(fields) do requireResult(Menu:UpdateElement(menuId, pageId, id, { value = draft[key] })) end
+        for key, id in pairs(fields) do
+            if draft[key] ~= nil and key ~= 'color' then
+                requireResult(Menu:UpdateElement(menuId, pageId, id, { value = draft[key] }))
+            end
+        end
+        syncColors()
     end)
     add('button', { key = 'cancel', label = text.cancel, slot = 'footer', row = 'actions' }, closeMenu)
     add('button', { key = 'save', label = text.save, slot = 'footer', row = 'actions' }, function()
@@ -148,7 +189,9 @@ local function draw(value, x, y)
             (rect[3] + border * 2) * scale / width, (rect[4] + border * 2) / 1080, red, green, blue, alpha)
     end
     -- Draw all outline pieces before colored pieces so intersections stay clean.
-    if value.outline then for _, rect in ipairs(rectangles) do rectangle(rect, 1, 0, 0, 0) end end
+    if value.outline and value.outlineSize > 0 then
+        for _, rect in ipairs(rectangles) do rectangle(rect, value.outlineSize, 0, 0, 0) end
+    end
     for _, rect in ipairs(rectangles) do rectangle(rect, 0, r, g, b) end
 end
 

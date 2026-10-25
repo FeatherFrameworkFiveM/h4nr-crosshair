@@ -1,10 +1,11 @@
 Crosshair = {}
 
 Crosshair.palette = { '#FFFFFF', '#00BFFF', '#00FFFF', '#5EF2A0', '#FFFF00', '#FF5050', '#FF66CC', '#B388FF' }
-Crosshair.ranges = { size = { 2, 24 }, gap = { 0, 20 }, thickness = { 1, 6 }, opacity = { 10, 100 } }
+Crosshair.ranges = { size = { 0, 64 }, gap = { -32, 64 }, thickness = { 0.1, 16 }, opacity = { 0, 100 }, outlineSize = { 0, 8 } }
+Crosshair.steps = { size = 0.1, gap = 0.1, thickness = 0.1, opacity = 1, outlineSize = 0.1 }
 local styles = { cross = true, dot = true, t = true, box = true }
 local base = { enabled = true, style = 'cross', color = '#00BFFF', size = 7, gap = 4,
-    thickness = 2, opacity = 100, outline = true, centerDot = false }
+    thickness = 2, opacity = 100, outline = true, outlineSize = 1, centerDot = false }
 
 local function normalize(value, fallback)
     local result = {}
@@ -14,16 +15,13 @@ local function normalize(value, fallback)
         if Crosshair.ranges[key] then
             local bounds = Crosshair.ranges[key]
             if type(candidate) ~= 'number' or candidate ~= candidate or math.abs(candidate) == math.huge then candidate = default end
-            result[key] = math.floor(math.max(bounds[1], math.min(bounds[2], candidate)) + 0.5)
+            local step = Crosshair.steps[key]
+            result[key] = math.floor(math.max(bounds[1], math.min(bounds[2], candidate)) / step + 0.5) * step
         elseif key == 'style' then
             result[key] = styles[candidate] and candidate or default
         elseif key == 'color' then
             result[key] = default
-            if type(candidate) == 'string' then
-                for _, color in ipairs(Crosshair.palette) do
-                    if candidate:upper() == color then result[key] = color break end
-                end
-            end
+            if type(candidate) == 'string' and candidate:match('^#%x%x%x%x%x%x$') then result[key] = candidate:upper() end
         else
             if type(candidate) == 'boolean' then result[key] = candidate else result[key] = default end
         end
@@ -46,12 +44,14 @@ end
 -- Rectangles in 1080p reference pixels, relative to the aiming point.
 function Crosshair.geometry(settings)
     local rectangles = {}
-    local function rect(x, y, w, h) rectangles[#rectangles + 1] = { x, y, w, h } end
+    local function rect(x, y, w, h)
+        if w > 0 and h > 0 then rectangles[#rectangles + 1] = { x, y, w, h } end
+    end
     local size, gap, thickness = settings.size, settings.gap, settings.thickness
     if settings.style == 'dot' then
         rect(0, 0, size, size)
     elseif settings.style == 'box' then
-        local radius = size + gap
+        local radius = math.max(0, size + gap)
         rect(0, -radius, radius * 2 + thickness, thickness)
         rect(0, radius, radius * 2 + thickness, thickness)
         rect(-radius, 0, thickness, radius * 2 + thickness)
