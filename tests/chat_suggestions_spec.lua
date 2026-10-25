@@ -14,7 +14,7 @@ exports = { ['feather-chat'] = {
 } }
 local function load() dofile('server/chat_suggestions.lua') end
 load()
-check(#registration == 1 and registration[1].trigger == '/crosshair', 'register at startup using configured command')
+check(#registration == 1 and registration[1].trigger == '/tinta', 'register at startup using configured command')
 check(registration[1].description == 'Deschide setările țintei personalizate', 'Romanian suggestion')
 events['chat.ready.v1']()
 check(#registration == 1, 'duplicate ready event does not duplicate registration')

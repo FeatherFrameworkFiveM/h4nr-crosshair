@@ -24,19 +24,19 @@ the same time.
 Renamed from `feather-crosshair`. Stop the old resource before starting this one
 and replace any explicit `ensure feather-crosshair` configuration entry with
 `ensure h4nr-crosshair`. Existing client preferences are imported once from the
-old resource's KVP when no settings exist under the new name. `/crosshair`
-remains the player command.
+old resource's KVP when no settings exist under the new name. `/tinta`
+is the player command.
 
 ## Player settings
 
-Use **`/crosshair`**. An optional key can be assigned in FiveM key bindings.
+Use **`/tinta`**. An optional key can be assigned in FiveM key bindings.
 Romanian is the default language; `Config.DefaultLang = 'en_us'` selects English.
 Romanian covers the menu labels, help, style choices, toggle states, palette
 color names, action buttons, key-binding description, and chat suggestion.
 With `feather-chat` running, the configured command appears in autocomplete.
 The suggestion registers at startup and again after Chat restarts. Chat releases
 its input focus before executing the command, allowing the settings menu to
-take focus. In F8, enter `crosshair` without the slash.
+take focus. In F8, enter `tinta` without the slash.
 
 - Cross, square dot, T shape, or square outline.
 - CS2-style controls for length, thickness, gap, outline thickness, RGB color,
@@ -62,7 +62,7 @@ preference exists and when the player chooses Defaults.
 
 | Setting | Default | Meaning |
 | --- | --- | --- |
-| `Command` | `crosshair` | Player settings command; also registered for optional key binding. |
+| `Command` | `tinta` | Player settings command; also registered for optional key binding. |
 | `HideNativeReticle` | `true` | Hide GTA HUD component 14 each frame, independently of the player's Enabled setting. Turning the custom crosshair off therefore gives no ordinary reticle. |
 | `PreserveSniperScope` | `true` | While aiming through a first-person sniper-group scope, leave native sights available and omit the custom crosshair. Set false to suppress its reticle and draw the custom crosshair when eligible. This does not remove the scope camera/mask. |
 | `ExcludedWeapons` | `{}` | Weapon-name array that bypasses both custom drawing and native suppression. Useful for weapons with special sights. |
@@ -85,7 +85,7 @@ live verification and may need an `ExcludedWeapons` entry.
 
 The screenshot-inspired controls adjust this resource's static crosshair.
 They do not reproduce CS2 recoil, dynamic spread, game-specific measurement
-units, or share-code import. Use `/crosshair` to open the menu and change
+units, or share-code import. Use `/tinta` to open the menu and change
 settings with its sliders; no console variables are required.
 
 The custom crosshair appears only while aiming a firearm (including controller

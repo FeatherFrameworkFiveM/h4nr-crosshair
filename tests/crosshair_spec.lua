@@ -134,7 +134,7 @@ local function frame()
 end
 local function change(key, value) elements[key].callback({ value = value }) end
 local function click(key) elements[key].callback({}) end
-local function open() commands.crosshair() end
+local function open() commands[Config.Command]() end
 frame()
 check(hidden == 1 and #draws == 8, 'native hidden and custom drawn with outline')
 check(draws[5][1] < 0.5 and draws[5][2] == 0.5, 'centered geometry')

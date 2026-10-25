@@ -16,7 +16,7 @@ English fallback; the settings menu uses the modern Neon Vice preset.
 Resource/repository name: `h4nr-crosshair`, under `resources/[h4nr]`. Renamed
 from `feather-crosshair`; existing preferences are imported once from the old
 client KVP namespace when the new resource has no saved preferences. The
-`/crosshair` player command is unchanged.
+`/tinta` player command opens settings and is advertised by Chat.
 
 ## Delivery — 2026-10-25
 
@@ -42,7 +42,7 @@ predict impact, enforce accuracy, or track the muzzle ray.
 
 ## CS2-style customization menu — 2026-10-25
 
-The player opens `/crosshair` and adjusts the menu, as in the supplied CS2
+The player opens `/tinta` and adjusts the menu, as in the supplied CS2
 settings screenshot. Menu v2 renders length/thickness/gap/outline-width sliders
 with 0.1 steps; RGB channels use integer 0–255 sliders. Custom hex colors remain
 representable in the palette after saving/reopening. Palette selection and RGB

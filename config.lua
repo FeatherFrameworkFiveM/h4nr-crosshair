@@ -1,6 +1,6 @@
 Config = {}
 Config.DefaultLang = 'ro' -- ro / en_us
-Config.Command = 'crosshair'
+Config.Command = 'tinta'
 
 -- Server policy: independent of the player's custom-crosshair enabled toggle.
 Config.HideNativeReticle = true
