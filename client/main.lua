@@ -9,13 +9,17 @@ local labels = {
         color = 'Culori rapide', customColor = 'Personalizată', red = 'Roșu', green = 'Verde', blue = 'Albastru',
         size = 'Lungime', gap = 'Distanță față de centru', thickness = 'Grosime', outlineSize = 'Grosime contur',
         opacity = 'Opacitate (%)', outline = 'Contur negru', centerDot = 'Punct central',
-        reset = 'Valori implicite', cancel = 'Anulează', save = 'Salvează', command = 'Deschide setările țintei' },
+        reset = 'Valori implicite', cancel = 'Anulează', save = 'Salvează', command = 'Deschide setările țintei',
+        on = 'Activat', off = 'Dezactivat',
+        paletteLabels = { 'Alb', 'Albastru electric', 'Cian', 'Verde mentă', 'Galben', 'Roșu', 'Roz', 'Violet' } },
     en_us = { title = 'Crosshair settings', help = 'Preview on the right. Changes apply after Save.',
         enabled = 'Custom crosshair', style = 'Style', cross = 'Cross', dot = 'Dot', t = 'T shape', box = 'Square',
         color = 'Quick colors', customColor = 'Custom', red = 'Red', green = 'Green', blue = 'Blue',
         size = 'Length', gap = 'Center gap', thickness = 'Thickness', outlineSize = 'Outline thickness',
         opacity = 'Opacity (%)', outline = 'Black outline', centerDot = 'Center dot',
-        reset = 'Defaults', cancel = 'Cancel', save = 'Save', command = 'Open crosshair settings' },
+        reset = 'Defaults', cancel = 'Cancel', save = 'Save', command = 'Open crosshair settings',
+        on = 'On', off = 'Off',
+        paletteLabels = { 'White', 'Electric blue', 'Cyan', 'Mint green', 'Yellow', 'Red', 'Pink', 'Violet' } },
 }
 local text = labels[Config.DefaultLang] or labels.en_us
 local excluded = {}
@@ -81,8 +85,8 @@ local function buildMenu()
     add('textdisplay', { key = 'help', value = text.help })
     local function colorOptions()
         local options, found = {}, false
-        for _, color in ipairs(Crosshair.palette) do
-            options[#options + 1] = color
+        for index, color in ipairs(Crosshair.palette) do
+            options[#options + 1] = { value = color, color = color, label = text.paletteLabels[index] }
             if color == draft.color then found = true end
         end
         if not found then options[#options + 1] = { value = draft.color, color = draft.color, label = text.customColor } end
@@ -100,6 +104,7 @@ local function buildMenu()
     end
     local function field(key, kind, options)
         local spec = { key = key, label = text[key], value = draft[key], persist = true }
+        if kind == 'toggle' then spec.onLabel, spec.offLabel = text.on, text.off end
         if options then spec.options = options end
         local bounds = Crosshair.ranges[key]
         if bounds then spec.min, spec.max, spec.step = bounds[1], bounds[2], Crosshair.steps[key] end

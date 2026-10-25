@@ -63,3 +63,11 @@ server. Chat closes/releases its NUI focus before `ExecuteCommand`, enabling
 focus-aware consumers and preserving the new menu's focus after execution.
 Offline regression tests cover the real Chat client dispatch ordering and
 suggestion lifecycle. Confirm autocomplete and opening from chat in FiveM.
+
+## Romanian review — 2026-10-25
+
+Romanian remains the default (`Config.DefaultLang = 'ro'`) with `en_us` fallback.
+Reviewed labels/help/style choices, action buttons, key-binding description and
+chat suggestion. Added explicit translated toggle states (Activat/Dezactivat)
+to avoid Menu v2's English defaults, plus localized palette color names for
+accessible swatch labels. Custom colors retain the translated custom label.

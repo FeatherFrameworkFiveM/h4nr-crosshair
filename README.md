@@ -31,6 +31,8 @@ remains the player command.
 
 Use **`/crosshair`**. An optional key can be assigned in FiveM key bindings.
 Romanian is the default language; `Config.DefaultLang = 'en_us'` selects English.
+Romanian covers the menu labels, help, style choices, toggle states, palette
+color names, action buttons, key-binding description, and chat suggestion.
 With `feather-chat` running, the configured command appears in autocomplete.
 The suggestion registers at startup and again after Chat restarts. Chat releases
 its input focus before executing the command, allowing the settings menu to
