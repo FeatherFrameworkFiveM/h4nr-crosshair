@@ -1,0 +1,97 @@
+# Feather Crosshair
+
+Small, client-only GTA V/FiveM crosshair resource. Works alongside
+`feather-weapons` or another weapon system; requires only `feather-menu-v2` for
+its settings menu. No database, Core, Inventory, server scripts, frontend build,
+or additional NUI page is needed.
+
+## Install
+
+Place the resource in `resources/[feather]/feather-crosshair`, then start:
+
+```cfg
+ensure feather-menu-v2
+ensure feather-crosshair
+```
+
+If the server already starts the entire `[feather]` group, its explicit menu
+dependency handles ordering. For an already-running server, run `refresh` and
+`ensure feather-crosshair` in the server console. No change to `feather-weapons`
+or `feather-hud` is required. Avoid running another custom-crosshair resource at
+the same time.
+
+## Player settings
+
+Use **`/crosshair`**. An optional key can be assigned in FiveM key bindings.
+Romanian is the default language; `Config.DefaultLang = 'en_us'` selects English.
+
+- Cross, square dot, T shape, or square outline.
+- Eight colors, size, center gap, line thickness, opacity, black outline,
+  and optional center dot.
+- Live preview to the right of the menu. The crosshair preview is hidden when
+  its Enabled toggle is off.
+- **Save** applies and persists preferences in client KVP.
+- **Cancel**, Escape, menu replacement, or provider stop discard the draft.
+- **Defaults** resets the draft; press Save to apply it.
+
+Preferences survive reconnects and resource restarts on that client installation;
+they are shared by that player's characters, not stored in character SQL.
+Clearing the client's KVP data removes them.
+
+## Server configuration
+
+Edit `config.lua` and restart the resource. Settings are bounded and allowlisted,
+including values loaded from KVP. `Config.Defaults` applies when no saved
+preference exists and when the player chooses Defaults.
+
+| Setting | Default | Meaning |
+| --- | --- | --- |
+| `Command` | `crosshair` | Player settings command; also registered for optional key binding. |
+| `HideNativeReticle` | `true` | Hide GTA HUD component 14 each frame, independently of the player's Enabled setting. Turning the custom crosshair off therefore gives no ordinary reticle. |
+| `PreserveSniperScope` | `true` | While aiming through a first-person sniper-group scope, leave native sights available and omit the custom crosshair. Set false to suppress its reticle and draw the custom crosshair when eligible. This does not remove the scope camera/mask. |
+| `ExcludedWeapons` | `{}` | Weapon-name array that bypasses both custom drawing and native suppression. Useful for weapons with special sights. |
+| `Defaults.enabled` | `true` | Enable the custom crosshair. |
+| `Defaults.style` | `cross` | `cross`, `dot`, `t`, or `box`. |
+| `Defaults.color` | `#00BFFF` | One of the eight colors in `Crosshair.palette`. |
+| `Defaults.size` | `7` | Arm length, or square-dot side, 2–24 reference pixels. |
+| `Defaults.gap` | `4` | Inner gap, 0–20 reference pixels; square radius is size + gap. Ignored for dot. |
+| `Defaults.thickness` | `2` | Line/center-dot thickness, 1–6 reference pixels. Ignored for the main dot. |
+| `Defaults.opacity` | `100` | 10–100 percent, including the outline. |
+| `Defaults.outline` | `true` | One reference pixel of black outline. |
+| `Defaults.centerDot` | `false` | Add a center dot to cross, T, or square. |
+
+Dimensions scale from a 1080p reference using screen height, with horizontal
+normalization to keep proportions on wide displays. The aiming point is fixed
+at screen center; this is a static visual aid, not a projection of bullet impact,
+recoil, weapon spread, or the muzzle ray. Special camera/weapon modes require
+live verification and may need an `ExcludedWeapons` entry.
+
+The custom crosshair appears only while aiming a firearm (including controller
+targeting). It is hidden during reload, death, pause, screen fade, NUI focus,
+hidden native HUD, and the weapon wheel. The settings preview is independent of
+aiming and uses the draft. Sniper and excluded-weapon exceptions apply to
+gameplay, not the preview.
+
+Native suppression uses Cfx's [HUD component 14](https://github.com/citizenfx/natives/blob/master/HUD/HideHudComponentThisFrame.md).
+Rendering uses [DrawRect](https://github.com/citizenfx/natives/blob/master/GRAPHICS/DrawRect.md)
+without textures, browser blur, or NUI messages. Stopping this resource ends its
+frame-based drawing/suppression; other HUD resources retain their own policies.
+
+## Verification
+
+```sh
+python3 tests/run.py
+```
+
+Requires the Lua 5.4 shared library (`liblua5.4`). The offline suite exercises
+validation, geometry, aspect correction, native boundaries, drafts, persistence,
+scope policy, and provider restart with simulated Cfx services.
+
+Live FiveM acceptance remains required: check pistol/rifle/shotgun/taser,
+controller aim, first/third person, scope entry/exit, mounted scopes and special
+weapons, vehicle aim, reload, death/respawn, menus, pause, different resolutions,
+and affected ReShade setups. Confirm Save survives a reconnect; Cancel/Escape
+must restore the saved crosshair. Restart both resources and verify menu/focus
+recovery. Confirm ordinary native reticles stay hidden, sniper exceptions work,
+and stopping the resource restores the previous HUD policy. Offline tests do
+not establish visual alignment, performance, or in-game acceptance.
