@@ -59,7 +59,7 @@ function GetResourceKvpString() return stored end
 function SetResourceKvp(_, value) stored, writes = value, writes + 1 end
 function joaat(value) if value == 'GROUP_SNIPER' then return 100 end return 200 end
 function GetResourceState() return state.providerStopped and 'stopped' or 'started' end
-function GetCurrentResourceName() return 'feather-crosshair' end
+function GetCurrentResourceName() return 'h4nr-crosshair' end
 function RegisterCommand(name, callback) commands[name] = callback end
 function RegisterKeyMapping() end
 function AddEventHandler(name, callback) events[name] = callback end
@@ -220,4 +220,18 @@ check(#draws == 0 and hidden == 1, 'resource restart loads persisted disabled pr
 open()
 check(elements.enabled.spec.value == false, 'menu reads persisted false after restart')
 click('cancel')
+local externalReads = 0
+function GetExternalKvpString(resource, key)
+    check(resource == 'feather-crosshair' and key == 'feather-crosshair:settings:v1', 'read previous resource namespace')
+    externalReads = externalReads + 1
+    return 'saved'
+end
+stored = nil
+local previousWrites = writes
+dofile('client/main.lua')
+open()
+check(elements.enabled.spec.value == false and writes == previousWrites + 1, 'rename imports and saves old false preference')
+click('cancel')
+dofile('client/main.lua')
+check(externalReads == 1, 'new settings take precedence over old namespace')
 print(('Passed %d assertions (model, rendering, menu lifecycle, persistence, restart).'):format(count))

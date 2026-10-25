@@ -1,4 +1,4 @@
-local KVP_KEY = 'feather-crosshair:settings:v1'
+local KVP_KEY = 'h4nr-crosshair:settings:v1'
 local Menu = exports['feather-menu-v2']
 local menuId, pageId, draft
 local menuOpen, preview, opening = false, false, false
@@ -22,9 +22,19 @@ local SNIPER_GROUP = joaat('GROUP_SNIPER') & 0xFFFFFFFF
 
 local function load()
     local raw = GetResourceKvpString(KVP_KEY)
+    local migrated = false
+    if not raw then
+        -- KVP is scoped by resource name, so preserve preferences from the rename.
+        local ok, legacy = pcall(GetExternalKvpString, 'feather-crosshair', 'feather-crosshair:settings:v1')
+        if ok then raw, migrated = legacy, legacy ~= nil end
+    end
     if raw then
         local ok, value = pcall(json.decode, raw)
-        if ok then return Crosshair.sanitize(value) end
+        if ok and type(value) == 'table' then
+            local sanitized = Crosshair.sanitize(value)
+            if migrated then SetResourceKvp(KVP_KEY, json.encode(sanitized)) end
+            return sanitized
+        end
     end
     return Crosshair.defaults()
 end
@@ -34,7 +44,7 @@ local renderedSettings = settings
 
 local function requireResult(result)
     if type(result) ~= 'table' or not result.ok then
-        error(('[feather-crosshair] Menu v2: %s'):format(tostring(result and result.message)))
+        error(('[h4nr-crosshair] Menu v2: %s'):format(tostring(result and result.message)))
     end
     return result.value
 end

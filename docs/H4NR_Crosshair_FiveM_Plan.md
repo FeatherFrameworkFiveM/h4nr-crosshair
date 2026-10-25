@@ -1,4 +1,4 @@
-# Feather Crosshair — FiveM implementation
+# H4NR Crosshair — FiveM implementation
 
 ## Ownership
 
@@ -12,6 +12,11 @@ Menu v2 owns menu rendering, focus and input. Crosshair owns bounded drafts,
 Save/Cancel and client KVP persistence. Preferences are installation/player
 preferences rather than per-character records. Romanian is the default with
 English fallback; the settings menu uses the modern Neon Vice preset.
+
+Resource/repository name: `h4nr-crosshair`, under `resources/[h4nr]`. Renamed
+from `feather-crosshair`; existing preferences are imported once from the old
+client KVP namespace when the new resource has no saved preferences. The
+`/crosshair` player command is unchanged.
 
 ## Delivery — 2026-10-25
 

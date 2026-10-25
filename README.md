@@ -1,4 +1,4 @@
-# Feather Crosshair
+# H4NR Crosshair
 
 Small, client-only GTA V/FiveM crosshair resource. Works alongside
 `feather-weapons` or another weapon system; requires only `feather-menu-v2` for
@@ -7,18 +7,24 @@ or additional NUI page is needed.
 
 ## Install
 
-Place the resource in `resources/[feather]/feather-crosshair`, then start:
+Place the resource in `resources/[h4nr]/h4nr-crosshair`, then start:
 
 ```cfg
 ensure feather-menu-v2
-ensure feather-crosshair
+ensure h4nr-crosshair
 ```
 
-If the server already starts the entire `[feather]` group, its explicit menu
+If the server already starts the entire `[h4nr]` group, its explicit menu
 dependency handles ordering. For an already-running server, run `refresh` and
-`ensure feather-crosshair` in the server console. No change to `feather-weapons`
+`ensure h4nr-crosshair` in the server console. No change to `feather-weapons`
 or `feather-hud` is required. Avoid running another custom-crosshair resource at
 the same time.
+
+Renamed from `feather-crosshair`. Stop the old resource before starting this one
+and replace any explicit `ensure feather-crosshair` configuration entry with
+`ensure h4nr-crosshair`. Existing client preferences are imported once from the
+old resource's KVP when no settings exist under the new name. `/crosshair`
+remains the player command.
 
 ## Player settings
 
