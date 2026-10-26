@@ -3,7 +3,7 @@ game 'gta5'
 lua54 'yes'
 
 name 'h4nr-crosshair'
-author 'FeatherFrameworkFiveM'
+author 'iseeyoucopy'
 description 'Standalone customizable GTA V crosshair with Feather Menu v2 settings'
 version '0.2.1'
 
