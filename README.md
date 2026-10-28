@@ -56,7 +56,7 @@ Clearing the client's KVP data removes them.
 
 ## Server configuration
 
-Edit `config.lua` and restart the resource. Settings are bounded and allowlisted,
+Edit `config/shared.lua` (texts in `languages/`) and restart the resource. Settings are bounded and allowlisted,
 including values loaded from KVP. `Config.Defaults` applies when no saved
 preference exists and when the player chooses Defaults.
 

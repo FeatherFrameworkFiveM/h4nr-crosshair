@@ -7,7 +7,10 @@ author 'iseeyoucopy'
 description 'Standalone customizable GTA V crosshair with Feather Menu v2 settings'
 version '0.2.1'
 
-shared_script 'config.lua'
+shared_scripts {
+    'config/shared.lua',
+    'languages/*.lua',
+}
 
 client_scripts {
     'client/model.lua',

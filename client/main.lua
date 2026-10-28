@@ -3,25 +3,7 @@ local Menu = exports['feather-menu-v2']
 local menuId, pageId, draft
 local menuOpen, preview, opening = false, false, false
 local fields = {}
-local labels = {
-    ro = { title = 'Setări țintă', help = 'Previzualizare în dreapta. Modificările se aplică după Salvează.',
-        enabled = 'Țintă personalizată', style = 'Stil', cross = 'Cruce', dot = 'Punct', t = 'Forma T', box = 'Pătrat',
-        color = 'Culori rapide', customColor = 'Personalizată', red = 'Roșu', green = 'Verde', blue = 'Albastru',
-        size = 'Lungime', gap = 'Distanță față de centru', thickness = 'Grosime', outlineSize = 'Grosime contur',
-        opacity = 'Opacitate (%)', outline = 'Contur negru', centerDot = 'Punct central',
-        reset = 'Valori implicite', cancel = 'Anulează', save = 'Salvează', command = 'Deschide setările țintei',
-        on = 'Activat', off = 'Dezactivat',
-        paletteLabels = { 'Alb', 'Albastru electric', 'Cian', 'Verde mentă', 'Galben', 'Roșu', 'Roz', 'Violet' } },
-    en_us = { title = 'Crosshair settings', help = 'Preview on the right. Changes apply after Save.',
-        enabled = 'Custom crosshair', style = 'Style', cross = 'Cross', dot = 'Dot', t = 'T shape', box = 'Square',
-        color = 'Quick colors', customColor = 'Custom', red = 'Red', green = 'Green', blue = 'Blue',
-        size = 'Length', gap = 'Center gap', thickness = 'Thickness', outlineSize = 'Outline thickness',
-        opacity = 'Opacity (%)', outline = 'Black outline', centerDot = 'Center dot',
-        reset = 'Defaults', cancel = 'Cancel', save = 'Save', command = 'Open crosshair settings',
-        on = 'On', off = 'Off',
-        paletteLabels = { 'White', 'Electric blue', 'Cyan', 'Mint green', 'Yellow', 'Red', 'Pink', 'Violet' } },
-}
-local text = labels[Config.DefaultLang] or labels.en_us
+local text = Locales[Config.DefaultLang] or Locales.en_us
 local excluded = {}
 for _, weapon in ipairs(Config.ExcludedWeapons or {}) do excluded[joaat(weapon)] = true end
 local SNIPER_GROUP = joaat('GROUP_SNIPER') & 0xFFFFFFFF

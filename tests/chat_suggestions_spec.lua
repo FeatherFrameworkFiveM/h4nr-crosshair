@@ -1,4 +1,6 @@
-dofile('config.lua')
+dofile('config/shared.lua')
+dofile('languages/ro.lua')
+dofile('languages/en_us.lua')
 local events, registration, count = {}, {}, 0
 local chatState, ready = 'started', true
 local function check(value, message) count = count + 1 assert(value, message) end

@@ -6,8 +6,7 @@ local function register()
         local chat = exports['feather-chat']
         local health = chat:GetHealth()
         if not health.ok or health.value.state ~= 'ready' then return end
-        local description = Config.DefaultLang == 'ro' and 'Deschide setările țintei personalizate'
-            or 'Open custom crosshair settings'
+        local description = (Locales[Config.DefaultLang] or Locales.en_us).chatSuggestion
         local result = chat:RegisterSuggestion({ key = 'h4nr-crosshair.settings',
             trigger = '/' .. Config.Command, description = description })
         if not result.ok then error('registration failed: ' .. tostring(result.code)) end

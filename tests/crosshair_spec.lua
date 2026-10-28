@@ -3,10 +3,12 @@ local function check(value, message)
     count = count + 1
     assert(value, message)
 end
-for _, file in ipairs({ 'fxmanifest.lua', 'config.lua', 'client/model.lua', 'client/main.lua' }) do
+for _, file in ipairs({ 'fxmanifest.lua', 'config/shared.lua', 'languages/ro.lua', 'languages/en_us.lua', 'client/model.lua', 'client/main.lua' }) do
     check(loadfile(file) ~= nil, file .. ' syntax')
 end
-dofile('config.lua')
+dofile('config/shared.lua')
+dofile('languages/ro.lua')
+dofile('languages/en_us.lua')
 dofile('client/model.lua')
 
 local defaults = Crosshair.defaults()
