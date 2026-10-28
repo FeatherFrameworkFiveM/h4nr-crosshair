@@ -14,7 +14,7 @@ shared_scripts {
 
 client_scripts {
     'client/model.lua',
-    'client/main.lua'
+    'client/main.lua',
 }
 
 server_script 'server/chat_suggestions.lua'
